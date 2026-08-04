@@ -24,8 +24,8 @@
 ## Color Scheme
 
 - Accent Yellow: `#ecad0a` - accent lines, highlights
-- Blue Primary: `#209dd7` - links, key sections
-- Purple Secondary: `#753991` - submit buttons, important actions
+- Golden Summer Primary: `#d4a373` - links, key sections
+- Bold Hues Secondary: `#4361ee` - submit buttons, important actions
 - Dark Navy: `#032147` - main headings
 - Gray Text: `#888888` - supporting text, labels
 
