@@ -14,7 +14,12 @@ load_dotenv(ROOT_DIR / ".env")
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "").strip()
-MODEL_NAME = "openai/gpt-oss-120b"
+MODEL_NAME = os.getenv("OPENROUTER_MODEL", "google/gemma-4-31b-it:free").strip()
+FALLBACK_MODELS = [
+    "google/gemma-4-31b-it:free",
+    "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+    "google/gemma-4-26b-a4b-it:free",
+]
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 SYSTEM_PROMPT = """You are an AI Project Management Assistant.
@@ -52,37 +57,40 @@ async def call_openrouter(
         "X-Title": "Project Management MVP",
     }
 
-    payload = {
-        "model": model,
-        "messages": messages,
-    }
+    models_to_try = [model] + [m for m in FALLBACK_MODELS if m != model]
 
     async with httpx.AsyncClient(timeout=30.0) as client:
-        try:
-            response = await client.post(OPENROUTER_URL, headers=headers, json=payload)
-            if response.status_code != 200:
-                return {
-                    "ok": False,
-                    "status_code": response.status_code,
-                    "error": f"OpenRouter API returned status {response.status_code}: {response.text}",
-                }
-            data = response.json()
-            content = (
-                data.get("choices", [{}])[0]
-                .get("message", {})
-                .get("content", "")
-            )
-            return {
-                "ok": True,
-                "model": model,
-                "content": content,
-                "raw": data,
+        last_error = ""
+        for target_model in models_to_try:
+            payload = {
+                "model": target_model,
+                "messages": messages,
             }
-        except Exception as e:
-            return {
-                "ok": False,
-                "error": str(e),
-            }
+            try:
+                response = await client.post(OPENROUTER_URL, headers=headers, json=payload)
+                if response.status_code == 200:
+                    data = response.json()
+                    content = (
+                        data.get("choices", [{}])[0]
+                        .get("message", {})
+                        .get("content", "")
+                    )
+                    return {
+                        "ok": True,
+                        "model": target_model,
+                        "content": content,
+                        "raw": data,
+                    }
+                last_error = f"OpenRouter status {response.status_code} for {target_model}: {response.text}"
+                logger.warning(last_error)
+            except Exception as e:
+                last_error = str(e)
+                logger.warning(f"Error calling OpenRouter model {target_model}: {e}")
+
+        return {
+            "ok": False,
+            "error": last_error or "Failed to receive response from OpenRouter models.",
+        }
 
 
 async def test_ai_connectivity() -> Dict[str, Any]:
