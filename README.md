@@ -1,36 +1,71 @@
-# FlowKanban Frontend
+# Kanban Project Management
 
-Single-board Kanban Project Management web application built with Next.js, React, Tailwind CSS, and @hello-pangea/dnd.
+A single-board Kanban project management application built with a Next.js frontend, FastAPI backend, SQLite persistence, and an AI chat sidebar powered by OpenRouter.
 
 ## Features
 
-- Fixed 5 customizable columns (Backlog, To Do, In Progress, In Review, Done)
-- Inline column title editing
-- Card creation with title and details
-- Direct card deletion
-- Full drag-and-drop support across all columns
-- Pre-populated dummy project data
-- Responsive dark navy design matching project color palette
+- Single-board Kanban Interface: Drag and drop cards across five customizable columns.
+- Card Management: Create, edit, move, and delete cards with titles and details.
+- AI Chat Assistant: Integrated sidebar chat that answers questions and executes board mutations.
+- Persistence: User session and board state saved in SQLite database.
+- Docker Support: Containerized setup for quick local deployment.
 
-## Development Setup
+## Tech Stack
 
-Install dependencies:
-```powershell
-cd frontend
-npm install
+- Frontend: Next.js (React / TypeScript), Tailwind CSS, @hello-pangea/dnd, Vitest, Playwright.
+- Backend: FastAPI (Python), SQLite, Uvicorn, OpenRouter AI client.
+- Operations: Docker, Docker Compose, cross-platform scripts.
+
+## Quick Start
+
+### 1. Using Docker (Recommended)
+
+```bash
+docker-compose up --build
 ```
 
-Start dev server:
-```powershell
+Access the application at `http://localhost:8080`.
+
+### 2. Local Development Setup
+
+#### Backend Setup
+
+```bash
+cd backend
+pip install -e .
+uvicorn app.main:app --reload --port 8080
+```
+
+#### Frontend Setup
+
+```bash
+cd frontend
+npm install
 npm run dev
 ```
 
-Run unit tests:
-```powershell
-npm test
+Access the frontend at `http://localhost:3000`.
+
+## Operations Scripts
+
+Helper scripts are available in the `scripts/` directory:
+
+- Windows: `scripts/start.bat` or `scripts/start.ps1`
+- Linux / macOS: `scripts/start.sh`
+
+## Testing
+
+### Backend Unit Tests
+
+```bash
+cd backend
+pytest
 ```
 
-Run integration tests:
-```powershell
+### Frontend Unit & E2E Tests
+
+```bash
+cd frontend
+npm test
 npm run test:e2e
 ```
