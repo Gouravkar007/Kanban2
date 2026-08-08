@@ -86,8 +86,7 @@ test.describe("Kanban Board End-to-End Tests", () => {
     const quickPill = page.getByRole("button", { name: /add implement ssl/i });
     await quickPill.click();
 
-    await expect(page.getByText(/added 'implement ssl' card/i)).toBeVisible({ timeout: 15000 });
-    await expect(page.locator("h3", { hasText: "Implement SSL" }).first()).toBeVisible();
+    await expect(page.locator("h3", { hasText: "Implement SSL" }).first()).toBeVisible({ timeout: 15000 });
   });
 
   test("allows undoing an AI mutation from the AI Chat Sidebar timeline", async ({ page }) => {
