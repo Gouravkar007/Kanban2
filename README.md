@@ -1,69 +1,65 @@
-# Kanban Project Management
+# FlowKanban
 
-A single-board Kanban project management application built with a Next.js frontend, FastAPI backend, SQLite persistence, and an AI chat sidebar powered by OpenRouter.
+A single-board Kanban project management web application built with FastAPI and Next.js, featuring real-time AI board assistance.
+
+## Architecture
+
+- **Backend**: FastAPI (Python), SQLite database, Uvicorn server, OpenRouter AI integration
+- **Frontend**: Next.js (React), Tailwind CSS, `@hello-pangea/dnd`
+- **Infrastructure**: Docker & Docker Compose
 
 ## Features
 
-- Single-board Kanban Interface: Drag and drop cards across five customizable columns.
-- Card Management: Create, edit, move, and delete cards with titles and details.
-- AI Chat Assistant: Integrated sidebar chat that answers questions and executes board mutations.
-- Persistence: User session and board state saved in SQLite database.
-- Docker Support: Containerized setup for quick local deployment.
-
-## Tech Stack
-
-- Frontend: Next.js (React / TypeScript), Tailwind CSS, @hello-pangea/dnd, Vitest, Playwright.
-- Backend: FastAPI (Python), SQLite, Uvicorn, OpenRouter AI client.
-- Operations: Docker, Docker Compose, cross-platform scripts.
+- Fixed customizable columns (Backlog, To Do, In Progress, In Review, Done)
+- Drag-and-drop card movement across columns
+- Card creation, inline editing, and deletion
+- Authentication and session state
+- SQLite state persistence
+- AI sidebar assistant for automated board updates
 
 ## Quick Start
 
-### 1. Using Docker (Recommended)
+### Using Docker Compose
 
 ```bash
 docker-compose up --build
 ```
-
 Access the application at `http://localhost:8080`.
 
-### 2. Local Development Setup
+### Local Development
 
-#### Backend Setup
-
+1. **Backend**:
 ```bash
 cd backend
-pip install -e .
 uvicorn app.main:app --reload --port 8080
 ```
 
-#### Frontend Setup
-
+2. **Frontend**:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Access the frontend at `http://localhost:3000`.
+### Using Scripts
 
-## Operations Scripts
+Start service:
+- Windows: `.\scripts\start.bat` or `.\scripts\start.ps1`
+- Linux/macOS: `./scripts/start.sh`
 
-Helper scripts are available in the `scripts/` directory:
-
-- Windows: `scripts/start.bat` or `scripts/start.ps1`
-- Linux / macOS: `scripts/start.sh`
+Stop service:
+- Windows: `.\scripts\stop.bat` or `.\scripts\stop.ps1`
+- Linux/macOS: `./scripts/stop.sh`
 
 ## Testing
 
-### Backend Unit Tests
-
+Backend unit tests:
 ```bash
 cd backend
 pytest
 ```
 
-### Frontend Unit & E2E Tests
-
+Frontend unit and integration tests:
 ```bash
 cd frontend
 npm test
