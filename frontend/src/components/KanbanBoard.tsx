@@ -4,20 +4,37 @@ import React, { useState, useEffect } from "react";
 import { DragDropContext, DropResult } from "@hello-pangea/dnd";
 import { BoardState } from "../types/kanban";
 import { initialBoardState } from "../data/dummyData";
+import { Card } from "../types/kanban";
 import {
   renameColumn,
   addCard,
   deleteCard,
   moveCard,
+  updateCard,
 } from "../utils/kanbanUtils";
 import { KanbanColumn } from "./KanbanColumn";
 import { AddCardModal } from "./AddCardModal";
+import { CardDetailsModal } from "./CardDetailsModal";
+import { AiChatSidebar } from "./AiChatSidebar";
 import { Header } from "./Header";
 
 export const KanbanBoard: React.FC = () => {
   const [boardState, setBoardState] = useState<BoardState>(initialBoardState);
   const [isMounted, setIsMounted] = useState(false);
   const [activeAddColumnId, setActiveAddColumnId] = useState<string | null>(null);
+  const [activeDetailCard, setActiveDetailCard] = useState<Card | null>(null);
+  const [isAiOpen, setIsAiOpen] = useState(false);
+  const [username, setUsername] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return sessionStorage.getItem("flowkanban_user");
+    }
+    return null;
+  });
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("flowkanban_user");
+    setUsername(null);
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -81,9 +98,29 @@ export const KanbanBoard: React.FC = () => {
     );
   }
 
+  const handleSaveCardDetails = (cardId: string, newTitle: string, newDetails: string) => {
+    setBoardState((prev) => updateCard(prev, cardId, newTitle, newDetails));
+  };
+
+  const getColumnTitleForCard = (cardId: string): string | undefined => {
+    for (const col of Object.values(boardState.columns)) {
+      if (col.cardIds.includes(cardId)) {
+        return col.title;
+      }
+    }
+    return undefined;
+  };
+
   return (
     <div className="min-h-screen bg-darkNavy text-white flex flex-col font-sans select-none">
-      <Header totalCards={totalCards} totalColumns={totalColumns} />
+      <Header
+        totalCards={totalCards}
+        totalColumns={totalColumns}
+        onToggleAi={() => setIsAiOpen((prev) => !prev)}
+        isAiOpen={isAiOpen}
+        username={username || undefined}
+        onLogout={handleLogout}
+      />
 
       <main className="flex-1 overflow-x-auto p-6 scrollbar-thin">
         <div className="max-w-7xl mx-auto h-full flex flex-col">
@@ -103,6 +140,14 @@ export const KanbanBoard: React.FC = () => {
                     onRenameColumn={handleRenameColumn}
                     onDeleteCard={handleDeleteCard}
                     onOpenAddModal={(id) => setActiveAddColumnId(id)}
+                    onOpenCardDetails={(card) => setActiveDetailCard(card)}
+                    onUpdateCardTitle={(cardId, newTitle) =>
+                      handleSaveCardDetails(
+                        cardId,
+                        newTitle,
+                        boardState.cards[cardId]?.details || ""
+                      )
+                    }
                   />
                 );
               })}
@@ -116,6 +161,25 @@ export const KanbanBoard: React.FC = () => {
         columnTitle={activeColumnTitle}
         onClose={() => setActiveAddColumnId(null)}
         onAddCard={handleAddCard}
+      />
+
+      <CardDetailsModal
+        card={activeDetailCard}
+        columnTitle={activeDetailCard ? getColumnTitleForCard(activeDetailCard.id) : undefined}
+        isOpen={Boolean(activeDetailCard)}
+        onClose={() => setActiveDetailCard(null)}
+        onSave={handleSaveCardDetails}
+        onDelete={(cardId) => {
+          handleDeleteCard(cardId, "");
+          setActiveDetailCard(null);
+        }}
+      />
+
+      <AiChatSidebar
+        isOpen={isAiOpen}
+        onClose={() => setIsAiOpen(false)}
+        onBoardStateChange={(newState) => setBoardState(newState)}
+        currentBoard={boardState}
       />
     </div>
   );

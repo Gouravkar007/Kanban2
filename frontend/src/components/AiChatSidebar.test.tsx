@@ -9,7 +9,7 @@ describe("AiChatSidebar UI & Integration", () => {
 
   it("opens AI chat sidebar when AI Chat button is clicked", () => {
     render(<KanbanBoard />);
-    const aiBtn = screen.getByRole("button", { name: /ai chat/i });
+    const aiBtn = screen.getByTitle("Open AI Assistant");
     fireEvent.click(aiBtn);
 
     expect(screen.getByText("AI Assistant")).toBeInTheDocument();
@@ -20,16 +20,13 @@ describe("AiChatSidebar UI & Integration", () => {
 
   it("sends quick prompt and triggers board mutation update", async () => {
     render(<KanbanBoard />);
-    const aiBtn = screen.getByRole("button", { name: /ai chat/i });
+    const aiBtn = screen.getByTitle("Open AI Assistant");
     fireEvent.click(aiBtn);
 
-    const quickBtn = screen.getByRole("button", {
-      name: /add implement ssl in to do column/i,
-    });
+    const quickBtn = screen.getByText("Add Implement SSL in To Do column");
     fireEvent.click(quickBtn);
 
     await waitFor(() => {
-      // Check if Implement SSL card appears in UI
       expect(screen.getAllByText(/implement ssl/i).length).toBeGreaterThan(0);
     });
   });

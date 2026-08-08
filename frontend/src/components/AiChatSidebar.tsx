@@ -12,17 +12,20 @@ interface Message {
 }
 
 interface AiChatSidebarProps {
-  username: string;
+  username?: string;
   isOpen: boolean;
   onClose: () => void;
-  onBoardUpdate: (newBoard: BoardState) => void;
+  onBoardUpdate?: (newBoard: BoardState) => void;
+  onBoardStateChange?: (newBoard: BoardState) => void;
+  currentBoard?: BoardState;
 }
 
 export const AiChatSidebar: React.FC<AiChatSidebarProps> = ({
-  username,
+  username = "user",
   isOpen,
   onClose,
   onBoardUpdate,
+  onBoardStateChange,
 }) => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +96,8 @@ export const AiChatSidebar: React.FC<AiChatSidebarProps> = ({
       setMessages((prev) => [...prev, aiMsg]);
 
       if (res.board) {
-        onBoardUpdate(res.board);
+        onBoardUpdate?.(res.board);
+        onBoardStateChange?.(res.board);
       }
     } catch (error) {
       setIsLoading(false);

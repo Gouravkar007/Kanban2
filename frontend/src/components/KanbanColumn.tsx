@@ -12,6 +12,8 @@ interface KanbanColumnProps {
   onRenameColumn: (columnId: string, newTitle: string) => void;
   onDeleteCard: (cardId: string, columnId: string) => void;
   onOpenAddModal: (columnId: string) => void;
+  onOpenCardDetails?: (card: Card) => void;
+  onUpdateCardTitle?: (cardId: string, newTitle: string) => void;
 }
 
 export const KanbanColumn: React.FC<KanbanColumnProps> = ({
@@ -20,6 +22,8 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
   onRenameColumn,
   onDeleteCard,
   onOpenAddModal,
+  onOpenCardDetails,
+  onUpdateCardTitle,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [titleInput, setTitleInput] = useState(column.title);
@@ -43,7 +47,10 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
   };
 
   return (
-    <div className="flex flex-col w-80 shrink-0 bg-surfaceNavy/90 border border-borderNavy rounded-2xl p-4 max-h-full shadow-lg">
+    <div
+      data-testid={`column-${column.id}`}
+      className="flex flex-col w-80 shrink-0 bg-surfaceNavy/90 border border-borderNavy rounded-2xl p-4 max-h-full shadow-lg"
+    >
       {/* Column Header */}
       <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-borderNavy">
         {isEditing ? (
@@ -129,6 +136,8 @@ export const KanbanColumn: React.FC<KanbanColumnProps> = ({
                 index={index}
                 columnId={column.id}
                 onDeleteCard={onDeleteCard}
+                onOpenDetails={onOpenCardDetails}
+                onUpdateCardTitle={onUpdateCardTitle}
               />
             ))}
             {provided.placeholder}

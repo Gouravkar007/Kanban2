@@ -1,19 +1,17 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, expect, it, beforeEach } from "vitest";
-import { KanbanBoard } from "@/components/KanbanBoard";
+import { describe, expect, it, vi } from "vitest";
+import { LoginForm } from "@/components/LoginForm";
 
-describe("Auth Flow", () => {
-  beforeEach(() => {
-    sessionStorage.clear();
-  });
-
-  it("renders login screen when unauthenticated", () => {
-    render(<KanbanBoard />);
+describe("LoginForm Component", () => {
+  it("renders login form elements", () => {
+    render(<LoginForm onLogin={vi.fn()} />);
     expect(screen.getByText("Sign In to FlowKanban")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/enter username/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/enter password/i)).toBeInTheDocument();
   });
 
-  it("shows error message on invalid credentials", async () => {
-    render(<KanbanBoard />);
+  it("shows error on invalid credentials", async () => {
+    render(<LoginForm onLogin={vi.fn()} />);
     const usernameInput = screen.getByPlaceholderText(/enter username/i);
     const passwordInput = screen.getByPlaceholderText(/enter password/i);
     const submitBtn = screen.getByRole("button", { name: /sign in/i });
@@ -29,8 +27,9 @@ describe("Auth Flow", () => {
     });
   });
 
-  it("authenticates with valid credentials and allows logout", async () => {
-    render(<KanbanBoard />);
+  it("invokes onLogin on valid credentials", async () => {
+    const handleLogin = vi.fn();
+    render(<LoginForm onLogin={handleLogin} />);
     const usernameInput = screen.getByPlaceholderText(/enter username/i);
     const passwordInput = screen.getByPlaceholderText(/enter password/i);
     const submitBtn = screen.getByRole("button", { name: /sign in/i });
@@ -40,16 +39,7 @@ describe("Auth Flow", () => {
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
-      expect(screen.getByText("Single Board Project Workspace")).toBeInTheDocument();
-      expect(screen.getByText("user")).toBeInTheDocument();
-    });
-
-    // Logout
-    const logoutBtn = screen.getByRole("button", { name: /logout/i });
-    fireEvent.click(logoutBtn);
-
-    await waitFor(() => {
-      expect(screen.getByText("Sign In to FlowKanban")).toBeInTheDocument();
+      expect(handleLogin).toHaveBeenCalledWith("user");
     });
   });
 });

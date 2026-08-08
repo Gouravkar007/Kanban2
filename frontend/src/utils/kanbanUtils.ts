@@ -134,3 +134,27 @@ export function moveCard(
     },
   };
 }
+
+export function updateCard(
+  state: BoardState,
+  cardId: string,
+  newTitle: string,
+  newDetails: string
+): BoardState {
+  const trimmedTitle = newTitle.trim();
+  if (!trimmedTitle || !state.cards[cardId]) {
+    return state;
+  }
+
+  return {
+    ...state,
+    cards: {
+      ...state.cards,
+      [cardId]: {
+        ...state.cards[cardId],
+        title: trimmedTitle,
+        details: newDetails.trim(),
+      },
+    },
+  };
+}

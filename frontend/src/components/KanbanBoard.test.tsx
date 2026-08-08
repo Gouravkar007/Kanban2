@@ -1,21 +1,30 @@
-import { render, screen, within, fireEvent } from "@testing-library/react";
+import { render, screen, within, fireEvent, waitFor } from "@testing-library/react";
 import { KanbanBoard } from "@/components/KanbanBoard";
-import { describe, expect, it, beforeEach } from "vitest";
+import { describe, expect, it, beforeEach, afterEach } from "vitest";
 
 const getFirstColumn = () => screen.getAllByTestId(/column-/i)[0];
 
 describe("KanbanBoard", () => {
   beforeEach(() => {
-    sessionStorage.setItem("flowkanban_user", "user");
+    window.sessionStorage.setItem("flowkanban_user", "user");
   });
 
-  it("renders five columns", () => {
-    render(<KanbanBoard />);
-    expect(screen.getAllByTestId(/column-/i)).toHaveLength(5);
+  afterEach(() => {
+    window.sessionStorage.clear();
   });
 
-  it("renames a column", () => {
+  it("renders five columns", async () => {
     render(<KanbanBoard />);
+    await waitFor(() => {
+      expect(screen.getAllByTestId(/column-/i)).toHaveLength(5);
+    });
+  });
+
+  it("renames a column", async () => {
+    render(<KanbanBoard />);
+    await waitFor(() => {
+      expect(screen.getAllByTestId(/column-/i)).toHaveLength(5);
+    });
     const column = getFirstColumn();
     const titleHeader = within(column).getByTitle("Click to rename");
     fireEvent.click(titleHeader);
@@ -24,8 +33,11 @@ describe("KanbanBoard", () => {
     expect(input).toHaveValue("New Name");
   });
 
-  it("adds and removes a card", () => {
+  it("adds and removes a card", async () => {
     render(<KanbanBoard />);
+    await waitFor(() => {
+      expect(screen.getAllByTestId(/column-/i)).toHaveLength(5);
+    });
     const column = getFirstColumn();
     const addButton = within(column).getByRole("button", {
       name: /add card/i,
