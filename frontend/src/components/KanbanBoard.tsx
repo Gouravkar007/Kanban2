@@ -20,6 +20,8 @@ import { Header } from "./Header";
 
 export const KanbanBoard: React.FC = () => {
   const [boardState, setBoardState] = useState<BoardState>(initialBoardState);
+  const [pastStates, setPastStates] = useState<BoardState[]>([]);
+  const [futureStates, setFutureStates] = useState<BoardState[]>([]);
   const [isMounted, setIsMounted] = useState(false);
   const [activeAddColumnId, setActiveAddColumnId] = useState<string | null>(null);
   const [activeDetailCard, setActiveDetailCard] = useState<Card | null>(null);
@@ -36,6 +38,68 @@ export const KanbanBoard: React.FC = () => {
     setUsername(null);
   };
 
+  const updateBoardState = (
+    nextStateOrUpdater: BoardState | ((prev: BoardState) => BoardState)
+  ) => {
+    setBoardState((prev) => {
+      const nextState = typeof nextStateOrUpdater === "function"
+        ? nextStateOrUpdater(prev)
+        : nextStateOrUpdater;
+
+      if (JSON.stringify(prev) !== JSON.stringify(nextState)) {
+        setPastStates((past) => [...past.slice(-19), prev]);
+        setFutureStates([]);
+      }
+      return nextState;
+    });
+  };
+
+  const handleUndo = () => {
+    if (pastStates.length === 0) return;
+    const previousState = pastStates[pastStates.length - 1];
+    const remainingPast = pastStates.slice(0, pastStates.length - 1);
+
+    setPastStates(remainingPast);
+    setFutureStates((future) => [boardState, ...future]);
+    setBoardState(previousState);
+  };
+
+  const handleRedo = () => {
+    if (futureStates.length === 0) return;
+    const nextState = futureStates[0];
+    const remainingFuture = futureStates.slice(1);
+
+    setFutureStates(remainingFuture);
+    setPastStates((past) => [...past, boardState]);
+    setBoardState(nextState);
+  };
+
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      const activeEl = document.activeElement;
+      const isEditingText =
+        activeEl &&
+        (activeEl.tagName === "INPUT" ||
+          activeEl.tagName === "TEXTAREA" ||
+          activeEl.getAttribute("contenteditable") === "true");
+
+      if (e.ctrlKey && !isEditingText) {
+        if (e.key.toLowerCase() === "z") {
+          e.preventDefault();
+          handleUndo();
+        } else if (e.key.toLowerCase() === "y") {
+          e.preventDefault();
+          handleRedo();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleGlobalKeyDown);
+    };
+  }, [pastStates, futureStates, boardState]);
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -43,10 +107,8 @@ export const KanbanBoard: React.FC = () => {
   const handleDragEnd = (result: DropResult) => {
     const { destination, source } = result;
 
-    // Dropped outside a droppable area
     if (!destination) return;
 
-    // Dropped in exact same position
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
@@ -54,7 +116,7 @@ export const KanbanBoard: React.FC = () => {
       return;
     }
 
-    setBoardState((prev) =>
+    updateBoardState((prev) =>
       moveCard(
         prev,
         source.droppableId,
@@ -66,16 +128,16 @@ export const KanbanBoard: React.FC = () => {
   };
 
   const handleRenameColumn = (columnId: string, newTitle: string) => {
-    setBoardState((prev) => renameColumn(prev, columnId, newTitle));
+    updateBoardState((prev) => renameColumn(prev, columnId, newTitle));
   };
 
   const handleDeleteCard = (cardId: string, columnId: string) => {
-    setBoardState((prev) => deleteCard(prev, cardId, columnId));
+    updateBoardState((prev) => deleteCard(prev, cardId, columnId));
   };
 
   const handleAddCard = (title: string, details: string) => {
     if (!activeAddColumnId) return;
-    setBoardState((prev) =>
+    updateBoardState((prev) =>
       addCard(prev, activeAddColumnId, title, details)
     );
   };
@@ -99,7 +161,7 @@ export const KanbanBoard: React.FC = () => {
   }
 
   const handleSaveCardDetails = (cardId: string, newTitle: string, newDetails: string) => {
-    setBoardState((prev) => updateCard(prev, cardId, newTitle, newDetails));
+    updateBoardState((prev) => updateCard(prev, cardId, newTitle, newDetails));
   };
 
   const getColumnTitleForCard = (cardId: string): string | undefined => {
@@ -120,6 +182,10 @@ export const KanbanBoard: React.FC = () => {
         isAiOpen={isAiOpen}
         username={username || undefined}
         onLogout={handleLogout}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
+        canUndo={pastStates.length > 0}
+        canRedo={futureStates.length > 0}
       />
 
       <main className="flex-1 overflow-x-auto p-6 scrollbar-thin">
@@ -178,7 +244,7 @@ export const KanbanBoard: React.FC = () => {
       <AiChatSidebar
         isOpen={isAiOpen}
         onClose={() => setIsAiOpen(false)}
-        onBoardStateChange={(newState) => setBoardState(newState)}
+        onBoardStateChange={updateBoardState}
         currentBoard={boardState}
       />
     </div>

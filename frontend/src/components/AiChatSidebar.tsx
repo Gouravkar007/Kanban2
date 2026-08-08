@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Bot, Send, X, Sparkles, MessageSquare, Loader2 } from "lucide-react";
+import { Bot, Send, X, Sparkles, MessageSquare, Loader2, Undo } from "lucide-react";
 import { BoardState } from "../types/kanban";
 import { aiChatApi } from "../utils/api";
 
@@ -9,6 +9,7 @@ interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
+  previousBoardState?: BoardState;
 }
 
 interface AiChatSidebarProps {
@@ -26,6 +27,7 @@ export const AiChatSidebar: React.FC<AiChatSidebarProps> = ({
   onClose,
   onBoardUpdate,
   onBoardStateChange,
+  currentBoard,
 }) => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -52,6 +54,17 @@ export const AiChatSidebar: React.FC<AiChatSidebarProps> = ({
 
   if (!isOpen) return null;
 
+  const handleUndoMessage = (msg: Message) => {
+    if (msg.previousBoardState && onBoardStateChange) {
+      onBoardStateChange(msg.previousBoardState);
+      setMessages((prev) =>
+        prev.map((item) =>
+          item.id === msg.id ? { ...item, previousBoardState: undefined } : item
+        )
+      );
+    }
+  };
+
   const handleSend = async (textToSend?: string) => {
     const promptText = (textToSend || input).trim();
     if (!promptText || isLoading) return;
@@ -61,6 +74,8 @@ export const AiChatSidebar: React.FC<AiChatSidebarProps> = ({
       role: "user",
       content: promptText,
     };
+
+    const boardBeforeMutation = currentBoard ? JSON.parse(JSON.stringify(currentBoard)) : undefined;
 
     setMessages((prev) => [...prev, userMsg]);
     if (!textToSend) setInput("");
@@ -87,10 +102,16 @@ export const AiChatSidebar: React.FC<AiChatSidebarProps> = ({
         return;
       }
 
+      const hasBoardChanges =
+        res.board &&
+        boardBeforeMutation &&
+        JSON.stringify(res.board) !== JSON.stringify(boardBeforeMutation);
+
       const aiMsg: Message = {
         id: `ai-${Date.now()}`,
         role: "assistant",
         content: res.reply || "Request processed.",
+        previousBoardState: hasBoardChanges ? boardBeforeMutation : undefined,
       };
 
       setMessages((prev) => [...prev, aiMsg]);
@@ -173,7 +194,19 @@ export const AiChatSidebar: React.FC<AiChatSidebarProps> = ({
                   : "bg-[#0b1a3f] border border-[#1e3a6d] text-gray-200 rounded-bl-none"
               }`}
             >
-              {m.content}
+              <div>{m.content}</div>
+              {m.role === "assistant" && m.previousBoardState && (
+                <div className="mt-2 pt-2 border-t border-[#1e3a6d] flex justify-end">
+                  <button
+                    onClick={() => handleUndoMessage(m)}
+                    className="flex items-center gap-1.5 text-[10px] text-accentYellow hover:text-white transition-colors cursor-pointer px-2.5 py-1 rounded bg-[#032147] border border-[#1e3a6d]"
+                    title="Undo this specific AI change"
+                  >
+                    <Undo className="h-3 w-3" />
+                    <span>Undo Action</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}

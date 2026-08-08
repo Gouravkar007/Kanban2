@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { LayoutGrid, Layers, Bot, Sparkles, LogOut, User } from "lucide-react";
+import { LayoutGrid, Layers, Bot, Sparkles, LogOut, User, Undo, Redo } from "lucide-react";
 
 interface HeaderProps {
   totalCards: number;
@@ -10,6 +10,10 @@ interface HeaderProps {
   onLogout?: () => void;
   onToggleAi?: () => void;
   isAiOpen?: boolean;
+  onUndo?: () => void;
+  onRedo?: () => void;
+  canUndo?: boolean;
+  canRedo?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,6 +23,10 @@ export const Header: React.FC<HeaderProps> = ({
   onLogout,
   onToggleAi,
   isAiOpen,
+  onUndo,
+  onRedo,
+  canUndo = false,
+  canRedo = false,
 }) => {
   return (
     <header className="sticky top-0 z-30 bg-darkNavy/90 backdrop-blur-md border-b border-borderNavy px-6 py-4">
@@ -41,6 +49,36 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         <div className="flex items-center gap-3 text-xs">
+          {onUndo && (
+            <button
+              onClick={onUndo}
+              disabled={!canUndo}
+              className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                canUndo
+                  ? "bg-cardNavy border-borderNavy text-white hover:bg-borderNavy"
+                  : "opacity-40 cursor-not-allowed border-borderNavy/50 text-grayText"
+              }`}
+              title="Undo last action (Ctrl+Z)"
+            >
+              <Undo className="h-4 w-4" />
+            </button>
+          )}
+
+          {onRedo && (
+            <button
+              onClick={onRedo}
+              disabled={!canRedo}
+              className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
+                canRedo
+                  ? "bg-cardNavy border-borderNavy text-white hover:bg-borderNavy"
+                  : "opacity-40 cursor-not-allowed border-borderNavy/50 text-grayText"
+              }`}
+              title="Redo action (Ctrl+Y)"
+            >
+              <Redo className="h-4 w-4" />
+            </button>
+          )}
+
           {onToggleAi && (
             <button
               onClick={onToggleAi}

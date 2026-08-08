@@ -90,6 +90,25 @@ test.describe("Kanban Board End-to-End Tests", () => {
     await expect(page.locator("h3", { hasText: "Implement SSL" }).first()).toBeVisible();
   });
 
+  test("allows undoing an AI mutation from the AI Chat Sidebar timeline", async ({ page }) => {
+    const aiBtn = page.getByTitle("Open AI Assistant");
+    await expect(aiBtn).toBeVisible({ timeout: 10000 });
+    await aiBtn.click();
+
+    await expect(page.getByText("AI Assistant")).toBeVisible();
+
+    const quickPill = page.getByRole("button", { name: /add implement ssl/i });
+    await quickPill.click();
+
+    await expect(page.locator("h3", { hasText: "Implement SSL" }).first()).toBeVisible({ timeout: 15000 });
+
+    const undoActionBtn = page.getByRole("button", { name: /undo action/i });
+    await expect(undoActionBtn).toBeVisible();
+    await undoActionBtn.click();
+
+    await expect(page.locator("h3", { hasText: "Implement SSL" }).first()).toBeHidden();
+  });
+
   test("contains no emojis anywhere in page content", async ({ page }) => {
     const content = await page.content();
     const emojiRegex = /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F800}-\u{1F8FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u;
