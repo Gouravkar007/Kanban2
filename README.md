@@ -1,67 +1,88 @@
 # FlowKanban
 
-A single-board Kanban project management web application built with FastAPI and Next.js, featuring real-time AI board assistance.
+FlowKanban is a single-board Kanban project management application featuring automated AI board assistance and full undo/redo capabilities.
 
-## Architecture
+## Architecture & Structure
 
-- **Backend**: FastAPI (Python), SQLite database, Uvicorn server, OpenRouter AI integration
-- **Frontend**: Next.js (React), Tailwind CSS, `@hello-pangea/dnd`
-- **Infrastructure**: Docker & Docker Compose
+The project is structured as a client-side rendered Next.js frontend integrated with a FastAPI backend.
 
-## Features
-
-- Fixed customizable columns (Backlog, To Do, In Progress, In Review, Done)
-- Drag-and-drop card movement across columns
-- Card creation, inline editing, and deletion
-- Authentication and session state
-- SQLite state persistence
-- AI sidebar assistant for automated board updates
-
-## Quick Start
-
-### Using Docker Compose
-
-```bash
-docker-compose up --build
 ```
-Access the application at `http://localhost:8080`.
+.
+├── backend/               # FastAPI python backend
+│   ├── app/               # Core API server logic
+│   │   ├── static/        # Compiled frontend production assets
+│   │   └── logs/          # Local rotating application log files
+│   └── tests/             # Backend pytest suite
+├── frontend/              # Next.js frontend workspace
+│   ├── src/               # React components and state utilities
+│   └── e2e/               # Playwright E2E integration test suite
+└── scripts/               # Automation control scripts
+```
 
-### Local Development
+- **Backend**: FastAPI serving static files, managing basic user board states, and routing requests to OpenRouter.
+- **Frontend**: Next.js (React), HSL-curated Hues CSS design system, `@hello-pangea/dnd` for drag-and-drop actions, and local Undo/Redo history tracking.
 
-1. **Backend**:
+## Development Pipeline
+
+### 1. Prerequisite Configuration
+
+Create a `.env` file in the root directory:
+```env
+OPENROUTER_API_KEY=your_openrouter_api_key
+```
+
+### 2. Local Setup
+
+#### Backend Setup
 ```bash
 cd backend
-uvicorn app.main:app --reload --port 8080
+python -m venv venv
+venv\Scripts\activate   # On Windows
+pip install -r requirements.txt
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8080
 ```
 
-2. **Frontend**:
+#### Frontend Setup
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-### Using Scripts
-
-Start service:
-- Windows: `.\scripts\start.bat` or `.\scripts\start.ps1`
-- Linux/macOS: `./scripts/start.sh`
-
-Stop service:
-- Windows: `.\scripts\stop.bat` or `.\scripts\stop.ps1`
-- Linux/macOS: `./scripts/stop.sh`
-
-## Testing
-
-Backend unit tests:
-```bash
-cd backend
-pytest
-```
-
-Frontend unit and integration tests:
+### 3. Production Build & Static Export Sync
+To compile the frontend and serve it statically from the FastAPI server:
 ```bash
 cd frontend
-npm test
-npm run test:e2e
+npm run build
+cd ../backend
+Remove-Item -Path app/static/* -Recurse -Force -ErrorAction SilentlyContinue
+Copy-Item -Path ../frontend/out/* -Destination app/static/ -Recurse -Container -Force
 ```
+
+### 4. Testing Suite
+
+#### Backend Pytest Tests
+```bash
+cd backend
+python -m pytest
+```
+
+#### Frontend Vitest Tests
+```bash
+cd frontend
+npm run test -- --run
+```
+
+#### Playwright End-to-End Tests
+```bash
+cd frontend
+npx playwright test
+```
+
+## Quick Deployment
+
+Deploy locally using Docker:
+```bash
+docker-compose up --build
+```
+Access the application at `http://localhost:8080`.
