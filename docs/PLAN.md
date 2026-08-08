@@ -12,12 +12,12 @@ Goal
 
 Checklist
 
-- [ ] Review current frontend source and test coverage.
-- [ ] Confirm current architecture, libraries, and existing behavior.
-- [ ] Draft `frontend/AGENTS.md` to document the frontend.
-- [ ] Define a minimum 80% unit test coverage goal for frontend and backend logic.
-- [ ] Define robust integration tests for critical flows.
-- [ ] Get user approval on this plan before moving to Part 2.
+- [x] Review current frontend source and test coverage.
+- [x] Confirm current architecture, libraries, and existing behavior.
+- [x] Draft `frontend/AGENTS.md` to document the frontend.
+- [x] Define a minimum 80% unit test coverage goal for frontend and backend logic.
+- [x] Define robust integration tests for critical flows.
+- [x] Get user approval on this plan before moving to Part 2.
 
 Success criteria
 
@@ -37,16 +37,16 @@ Goal
 
 Checklist
 
-- [ ] Create `backend/` directory.
-- [ ] Add FastAPI app with one HTTP route at `/api/health`.
-- [ ] Add static file serving for the frontend build output under `/`.
-- [ ] Create `Dockerfile` for the full stack container.
-- [ ] Add `docker-compose.yaml` if needed for local development.
-- [ ] Add scripts in `scripts/`:
+- [x] Create `backend/` directory.
+- [x] Add FastAPI app with one HTTP route at `/api/health`.
+- [x] Add static file serving for the frontend build output under `/`.
+- [x] Create `Dockerfile` for the full stack container.
+- [x] Add `docker-compose.yaml` if needed for local development.
+- [x] Add scripts in `scripts/`:
   - `start.ps1`, `stop.ps1`
   - `start.sh`, `stop.sh`
   - `start.bat`, `stop.bat`
-- [ ] Confirm `uv` is the package manager in Docker and dependency installation works.
+- [x] Confirm `uv` is the package manager in Docker and dependency installation works.
 
 Tests
 
@@ -71,11 +71,11 @@ Goal
 
 Checklist
 
-- [ ] Add frontend build step to the repo.
-- [ ] Configure backend to serve the static Next.js output.
-- [ ] Ensure the frontend routes work from `/`.
-- [ ] Add frontend unit tests for core components.
-- [ ] Add frontend integration tests for rendering the Kanban board.
+- [x] Add frontend build step to the repo.
+- [x] Configure backend to serve the static Next.js output.
+- [x] Ensure the frontend routes work from `/`.
+- [x] Add frontend unit tests for core components.
+- [x] Add frontend integration tests for rendering the Kanban board.
 
 Tests
 
@@ -99,12 +99,12 @@ Goal
 
 Checklist
 
-- [ ] Add login page or modal.
-- [ ] Validate credentials against `user` / `password`.
-- [ ] Store session state in client-side state or cookie.
-- [ ] Protect the Kanban route/view behind auth.
-- [ ] Add logout support.
-- [ ] Add tests for login success, failure, and logout.
+- [x] Add login page or modal.
+- [x] Validate credentials against `user` / `password`.
+- [x] Store session state in client-side state or cookie.
+- [x] Protect the Kanban route/view behind auth.
+- [x] Add logout support.
+- [x] Add tests for login success, failure, and logout.
 
 Tests
 
@@ -129,11 +129,11 @@ Goal
 
 Checklist
 
-- [ ] Define `users`, `boards`, `columns`, `cards` tables or JSON-based storage.
-- [ ] Decide whether to store board state as JSON in one row.
-- [ ] Create `docs/schema.md` or add schema details in `docs/PLAN.md`.
-- [ ] Include sample JSON structure.
-- [ ] Review and sign off before implementation.
+- [x] Define `users`, `boards`, `columns`, `cards` tables or JSON-based storage.
+- [x] Decide whether to store board state as JSON in one row.
+- [x] Create `docs/schema.md` or add schema details in `docs/PLAN.md`.
+- [x] Include sample JSON structure.
+- [x] Review and sign off before implementation.
 
 Tests
 
@@ -156,11 +156,11 @@ Goal
 
 Checklist
 
-- [ ] Add backend route `GET /api/board`.
-- [ ] Add backend route `POST /api/board`.
-- [ ] Add backend route `POST /api/login` or equivalent auth check.
-- [ ] Ensure SQLite database auto-creates if absent.
-- [ ] Add backend unit tests for read/write and login behavior.
+- [x] Add backend route `GET /api/board`.
+- [x] Add backend route `POST /api/board`.
+- [x] Add backend route `POST /api/login` or equivalent auth check.
+- [x] Ensure SQLite database auto-creates if absent.
+- [x] Add backend unit tests for read/write and login behavior.
 
 Tests
 
@@ -182,11 +182,11 @@ Goal
 
 Checklist
 
-- [ ] Replace `initialBoardState` with API-driven state loading.
-- [ ] Add backend save calls for rename/add/delete/move actions.
-- [ ] Show loading state while board loads.
-- [ ] Add error handling for API failures.
-- [ ] Add integration tests for full frontend/backend persistence flow.
+- [x] Replace `initialBoardState` with API-driven state loading.
+- [x] Add backend save calls for rename/add/delete/move actions.
+- [x] Show loading state while board loads.
+- [x] Add error handling for API failures.
+- [x] Add integration tests for full frontend/backend persistence flow.
 
 Tests
 
@@ -208,11 +208,11 @@ Goal
 
 Checklist
 
-- [ ] Add backend route `POST /api/ai/check` or similar.
-- [ ] Implement OpenRouter client call.
-- [ ] Use `OPENROUTER_API_KEY` from `.env`.
-- [ ] Add simple test that sends `2+2` and verifies AI response.
-- [ ] Add unit tests around AI integration wiring.
+- [x] Add backend route `POST /api/ai/check` or similar.
+- [x] Implement OpenRouter client call.
+- [x] Use `OPENROUTER_API_KEY` from `.env`.
+- [x] Add simple test that sends `2+2` and verifies AI response.
+- [x] Add unit tests around AI integration wiring.
 
 Tests
 
@@ -233,10 +233,10 @@ Goal
 
 Checklist
 
-- [ ] Define structured output schema for AI responses.
-- [ ] Send `board`, `question`, and `conversationHistory` to the AI.
-- [ ] Parse AI output and apply changes if present.
-- [ ] Add tests for AI output parsing and board update handling.
+- [x] Define structured output schema for AI responses.
+- [x] Send `board`, `question`, and `conversationHistory` to the AI.
+- [x] Parse AI output and apply changes if present.
+- [x] Add tests for AI output parsing and board update handling.
 
 Tests
 
@@ -258,11 +258,11 @@ Goal
 
 Checklist
 
-- [ ] Add chat sidebar UI.
-- [ ] Add conversation state management.
-- [ ] Send user message and board state to backend AI endpoint.
-- [ ] Display AI response and apply board updates.
-- [ ] Add tests for chat UI and AI interaction flow.
+- [x] Add chat sidebar UI.
+- [x] Add conversation state management.
+- [x] Send user message and board state to backend AI endpoint.
+- [x] Display AI response and apply board updates.
+- [x] Add tests for chat UI and AI interaction flow.
 
 Tests
 
@@ -274,3 +274,71 @@ Success criteria
 - users can chat with the sidebar.
 - AI responses appear in chat.
 - AI-driven board updates refresh the UI automatically.
+
+## Part 11: CI/CD Pipeline & GitHub Actions Automation
+
+Goal
+
+- Set up GitHub Actions workflow to run backend pytest, frontend unit tests, and Playwright integration tests automatically on every push and pull request.
+- Add automated linting and build checks.
+
+Checklist
+
+- [ ] Create `.github/workflows/ci.yml`.
+- [ ] Add backend test step (pytest with uv / python).
+- [ ] Add frontend test step (Vitest & Playwright e2e).
+- [ ] Add Docker build verification step.
+- [ ] Add workflow status badge to README.md.
+
+Tests
+
+- GitHub Actions workflow execution on push.
+
+Success criteria
+
+- All backend and frontend tests execute cleanly in GitHub Actions CI pipeline.
+
+## Part 12: Board Export, Import, & Reset Controls
+
+Goal
+
+- Allow users to export their Kanban board as a JSON file, import a previously saved JSON board, and reset the board back to initial demo data.
+
+Checklist
+
+- [ ] Add Export Board button to download `kanban-board.json`.
+- [ ] Add Import Board feature to upload and validate JSON board files.
+- [ ] Add Reset Board modal with confirmation.
+- [ ] Connect export/import/reset options to backend APIs.
+
+Tests
+
+- unit tests for JSON import validation.
+- integration tests for export, import, and reset operations.
+
+Success criteria
+
+- User can download, upload, and reset Kanban board state seamlessly.
+
+## Part 13: Card Labels, Priorities, and Search/Filtering
+
+Goal
+
+- Add optional Priority levels (Low, Medium, High) and Tag labels to Kanban cards.
+- Add a search input bar to filter cards dynamically.
+
+Checklist
+
+- [ ] Add priority badge selector to Card creation/editing.
+- [ ] Add visual tag/label badges on Kanban cards.
+- [ ] Add real-time search bar to filter board cards by title or tag.
+- [ ] Update backend JSON schema and AI prompt parser to handle priorities and tags.
+
+Tests
+
+- unit tests for priority and tag rendering.
+- integration tests for searching and filtering cards.
+
+Success criteria
+
+- Cards display color-coded priority and tag badges; search bar filters cards in real time.
